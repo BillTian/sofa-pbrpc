@@ -73,7 +73,9 @@ public:
     //             to sort trigger order: closer to zero, earlier to trigger.
     int acquire_read_quota(int quota)
     {
-        return _read_no_limit ? 1 : atomic_add_ret_old(&_read_quota, -quota);
+        // TODO:
+        //return _read_no_limit ? 1 : atomic_add_ret_old(&_read_quota, -quota);
+        return _read_no_limit ? 1 : BOOST_INTERLOCKED_EXCHANGE(&_read_quota, _read_quota - quota);
     }
 
     // Acquire some write quota.
@@ -83,14 +85,18 @@ public:
     //             to sort trigger order: closer to zero, earlier to trigger.
     int acquire_write_quota(int quota)
     {
-        return _write_no_limit ? 1 : atomic_add_ret_old(&_write_quota, -quota);
+        // TODO:
+        //return _write_no_limit ? 1 : atomic_add_ret_old(&_write_quota, -quota);
+        return _write_no_limit ? 1 : BOOST_INTERLOCKED_EXCHANGE(&_write_quota, _write_quota - quota);
     }
 
 private:
     bool _read_no_limit;
-    volatile int _read_quota;
+    //volatile int _read_quota;
+    volatile long _read_quota;
     bool _write_no_limit;
-    volatile int _write_quota;
+    //volatile int _write_quota;
+    volatile long _write_quota;
 
     SOFA_PBRPC_DISALLOW_EVIL_CONSTRUCTORS(FlowController);
 }; // class FlowController

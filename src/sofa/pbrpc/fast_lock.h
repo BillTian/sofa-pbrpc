@@ -7,7 +7,7 @@
 #ifndef _SOFA_PBRPC_FAST_LOCK_H_
 #define _SOFA_PBRPC_FAST_LOCK_H_
 
-#include <sofa/pbrpc/mutex_lock.h>
+//#include <sofa/pbrpc/mutex_lock.h>
 #include <sofa/pbrpc/spin_lock.h>
 
 namespace sofa {

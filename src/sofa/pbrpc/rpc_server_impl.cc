@@ -500,7 +500,7 @@ void RpcServerImpl::OnReceived(
     }
     else
     {
-        ::sofa::pbrpc::scoped_ptr<AbstractCompressedInputStream> is(
+        boost::scoped_ptr<AbstractCompressedInputStream> is(
                 get_compressed_input_stream(buffer.get(), compress_type));
         parse_request_return = request->ParseFromZeroCopyStream(is.get());
     }
@@ -704,7 +704,7 @@ void RpcServerImpl::SendSucceedResponse(
     }
     else
     {
-        ::sofa::pbrpc::scoped_ptr<AbstractCompressedOutputStream> os(
+        boost::scoped_ptr<AbstractCompressedOutputStream> os(
                 get_compressed_output_stream(&write_buffer, compress_type));
         serialize_response_return = response->SerializeToZeroCopyStream(os.get());
         os->Flush();

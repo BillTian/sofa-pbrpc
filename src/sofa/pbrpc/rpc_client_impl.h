@@ -21,7 +21,7 @@
 namespace sofa {
 namespace pbrpc {
 
-class RpcClientImpl: public sofa::pbrpc::enable_shared_from_this<RpcClientImpl>
+class RpcClientImpl: public boost::enable_shared_from_this<RpcClientImpl>
 {
 public:
     static const int MAINTAIN_INTERVAL_IN_MS = 100;

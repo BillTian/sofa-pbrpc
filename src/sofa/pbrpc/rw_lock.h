@@ -7,37 +7,39 @@
 #ifndef _SOFA_PBRPC_RW_LOCK_H_
 #define _SOFA_PBRPC_RW_LOCK_H_
 
-#include <pthread.h>
+#include <boost/thread.hpp>
+//#include <pthread.h>
 
 namespace sofa {
 namespace pbrpc {
-
-class RWLock
-{
-public:
-    RWLock()
-    {
-        pthread_rwlock_init(&_lock, NULL);
-    }
-    ~RWLock()
-    {
-        pthread_rwlock_destroy(&_lock);
-    }
-    void lock()
-    {
-        pthread_rwlock_wrlock(&_lock);
-    }
-    void lock_shared()
-    {
-        pthread_rwlock_rdlock(&_lock);
-    }
-    void unlock()
-    {
-        pthread_rwlock_unlock(&_lock);
-    }
-private:
-    pthread_rwlock_t _lock;
-};
+typedef boost::shared_mutex RWLock;
+// 
+// class RWLock
+// {
+// public:
+//     RWLock()
+//     {
+//         pthread_rwlock_init(&_lock, NULL);
+//     }
+//     ~RWLock()
+//     {
+//         pthread_rwlock_destroy(&_lock);
+//     }
+//     void lock()
+//     {
+//         pthread_rwlock_wrlock(&_lock);
+//     }
+//     void lock_shared()
+//     {
+//         pthread_rwlock_rdlock(&_lock);
+//     }
+//     void unlock()
+//     {
+//         pthread_rwlock_unlock(&_lock);
+//     }
+// private:
+//     pthread_rwlock_t _lock;
+// };
 
 class ReadLocker
 {

@@ -7,12 +7,10 @@
 #ifndef _SOFA_PBRPC_THREAD_GROUP_IMPL_H_
 #define _SOFA_PBRPC_THREAD_GROUP_IMPL_H_
 
-#include <unistd.h>
-#include <pthread.h>
 #include <cstdio>
 
 #include <boost/bind.hpp>
-
+#include <boost/thread.hpp>
 #include <sofa/pbrpc/io_service.h>
 #include <sofa/pbrpc/ext_closure.h>
 
@@ -21,7 +19,7 @@ namespace pbrpc {
 
 // Defined in this file.
 class ThreadGroupImpl;
-typedef sofa::pbrpc::shared_ptr<ThreadGroupImpl> ThreadGroupImplPtr;
+typedef boost::shared_ptr<ThreadGroupImpl> ThreadGroupImplPtr;
 
 // Thread init and destroy function.  Should be permanent closure.
 typedef ExtClosure<bool()>* ThreadInitFunc;
@@ -51,7 +49,7 @@ public:
         , _init_func(NULL)
         , _dest_func(NULL)
         , _io_service_work(NULL)
-        , _threads(NULL)
+        //, _threads(NULL)
         , _thread_params(NULL)
     {
         if (_name.empty())
@@ -104,7 +102,7 @@ public:
         SLOG(INFO, "start(): starting thread group [%s], thread_num=%d", _name.c_str(), _thread_num);
 #endif
         _io_service_work = new IOServiceWork(_io_service);
-        _threads = new pthread_t[_thread_num];
+        //_threads = new pthread_t[_thread_num];
         _thread_params = new ThreadParam[_thread_num];
         for (int i = 0; i < _thread_num; ++i)
         {
@@ -112,7 +110,9 @@ public:
             _thread_params[i].io_service = &_io_service;
             _thread_params[i].init_func = _init_func;
             _thread_params[i].dest_func = _dest_func;
-            int ret = pthread_create(&_threads[i], NULL, &ThreadGroupImpl::thread_run, &_thread_params[i]);
+            // TODO:
+            int ret = 0;// pthread_create(&_threads[i], NULL, &ThreadGroupImpl::thread_run, &_thread_params[i]);
+            _threads.create_thread(boost::bind(&ThreadGroupImpl::thread_run, &_thread_params[i]));
             if (ret != 0)
             {
 #if defined( LOG )
@@ -149,7 +149,8 @@ public:
             {
                 break;
             }
-            usleep(100000);
+            //usleep(100000);
+            boost::this_thread::sleep_for(boost::chrono::microseconds(100000));
         }
         if (init_fail)
         {
@@ -177,23 +178,25 @@ public:
         delete _io_service_work;
         _io_service_work = NULL;
 
-        for (int i = 0; i < _thread_num; ++i)
-        {
-            int ret = pthread_join(_threads[i], NULL);
-            if (ret != 0)
-            {
-#if defined( LOG )
-                LOG(ERROR) <<  "stop(): join thread[" << i << "] failed: error=%d" << ret;
-#else
-                SLOG(ERROR, "stop(): join thread[%d] failed: error=%d", i, ret);
-#endif
-            }
-        }
+//         for (int i = 0; i < _thread_num; ++i)
+//         {
+//             int ret = pthread_join(_threads[i], NULL);
+//             if (ret != 0)
+//             {
+// #if defined( LOG )
+//                 LOG(ERROR) <<  "stop(): join thread[" << i << "] failed: error=%d" << ret;
+// #else
+//                 SLOG(ERROR, "stop(): join thread[%d] failed: error=%d", i, ret);
+// #endif
+//             }
+//         }
+        // TODO:
+        _threads.join_all();
 
         delete []_thread_params;
         _thread_params = NULL;
-        delete []_threads;
-        _threads = NULL;
+//         delete []_threads;
+//         _threads = NULL;
 
 #if defined( LOG )
         LOG(INFO) <<  "stop(): thread group [" << _name << "] stopped";
@@ -289,7 +292,8 @@ private:
 
     IOService _io_service;
     IOServiceWork* _io_service_work;
-    pthread_t* _threads;
+//    pthread_t* _threads;
+    boost::thread_group _threads;
     ThreadParam* _thread_params;
 
     SOFA_PBRPC_DISALLOW_EVIL_CONSTRUCTORS(ThreadGroupImpl);

@@ -14,7 +14,7 @@
 #include <sofa/pbrpc/rpc_client.h>
 #include <sofa/pbrpc/rpc_server.h>
 
-#include <sofa/pbrpc/atomic.h>
+//#include <sofa/pbrpc/atomic.h>
 #include <sofa/pbrpc/counter.h>
 #include <sofa/pbrpc/closure.h>
 #include <sofa/pbrpc/ext_closure.h>

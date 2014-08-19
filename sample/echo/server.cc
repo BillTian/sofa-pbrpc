@@ -5,7 +5,7 @@
 // Author: qinzuoyan01@baidu.com (Qin Zuoyan)
 
 #include <signal.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <sofa/pbrpc/pbrpc.h>
 #include "echo_service.pb.h"
 
@@ -31,7 +31,8 @@ private:
 
 bool thread_init_func()
 {
-    sleep(1);
+//    sleep(1);
+    boost::this_thread::sleep_for(boost::chrono::seconds(1));
     SLOG(INFO, "Init work thread succeed");
     return true;
 }

@@ -17,7 +17,7 @@ namespace pbrpc {
 
 using boost::asio::ip::tcp;
 
-class RpcListener : public sofa::pbrpc::enable_shared_from_this<RpcListener>
+class RpcListener : public boost::enable_shared_from_this<RpcListener>
 {
     // Callback function when created or accepted a new connection.
     typedef boost::function<void(const RpcServerStreamPtr& /* stream */)> Callback;

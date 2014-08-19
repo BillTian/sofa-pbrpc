@@ -131,7 +131,7 @@ private:
                         _remote_endpoint,
                         meta,
                         RpcServerStreamWPtr(
-                            sofa::pbrpc::dynamic_pointer_cast<RpcServerStream>(shared_from_this())),
+                            boost::dynamic_pointer_cast<RpcServerStream>(shared_from_this())),
                         message,
                         data_size);
             }

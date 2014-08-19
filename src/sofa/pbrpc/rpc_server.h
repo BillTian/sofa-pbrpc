@@ -163,13 +163,13 @@ public:
     bool IsListening();
 
 public:
-    const sofa::pbrpc::shared_ptr<RpcServerImpl>& impl() const
+    const boost::shared_ptr<RpcServerImpl>& impl() const
     {
         return _impl;
     }
 
 private:
-    sofa::pbrpc::shared_ptr<RpcServerImpl> _impl;
+    boost::shared_ptr<RpcServerImpl> _impl;
 
     SOFA_PBRPC_DISALLOW_EVIL_CONSTRUCTORS(RpcServer);
 }; // class RpcServer

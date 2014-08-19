@@ -9,7 +9,7 @@
 
 #include <google/protobuf/stubs/common.h>
 
-#include <sofa/pbrpc/smart_ptr/smart_ptr.hpp>
+#include <boost/smart_ptr.hpp>
 
 namespace std {}
 
@@ -65,14 +65,14 @@ void log_handler(LogLevel level, const char* filename, int line, const char *fmt
 #define SOFA_PBRPC_SET_LOG_LEVEL(level) \
     ::sofa::pbrpc::internal::set_log_level(::sofa::pbrpc::LOG_LEVEL_##level)
 
-#define SLOG(level, fmt, arg...) \
+#define SLOG(level, fmt, ...) \
     (::sofa::pbrpc::LOG_LEVEL_##level > ::sofa::pbrpc::internal::get_log_level()) ? \
             (void)0 : ::sofa::pbrpc::internal::log_handler( \
-                    ::sofa::pbrpc::LOG_LEVEL_##level, __FILE__, __LINE__, fmt, ##arg) \
+                    ::sofa::pbrpc::LOG_LEVEL_##level, __FILE__, __LINE__, fmt, __VA_ARGS__) \
 
-#define SLOG_IF(condition, level, fmt, arg...) \
+#define SLOG_IF(condition, level, fmt, ...) \
     !(condition) ? (void)0 : ::sofa::pbrpc::internal::log_handler( \
-            ::sofa::pbrpc::LOG_LEVEL_##level, __FILE__, __LINE__, fmt, ##arg)
+            ::sofa::pbrpc::LOG_LEVEL_##level, __FILE__, __LINE__, fmt, __VA_ARGS__)
 
 #if defined( LOG )
 #define SCHECK(expression) CHECK(expression)

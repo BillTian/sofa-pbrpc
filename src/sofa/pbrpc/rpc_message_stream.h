@@ -260,8 +260,10 @@ private:
             return;
         }
 
+        // TODO
         // release token
-        atomic_comp_swap(&_receive_token, TOKEN_FREE, TOKEN_LOCK);
+        //atomic_comp_swap(&_receive_token, TOKEN_FREE, TOKEN_LOCK);
+        BOOST_INTERLOCKED_COMPARE_EXCHANGE(&_receive_token, TOKEN_FREE, TOKEN_LOCK);
 
         // trigger next receive
         try_start_receive();
@@ -324,8 +326,10 @@ private:
                 on_sent(_sending_message, _sending_cookie);
                 clear_sending_env();
 
+                // TODO:
                 // release token
-                atomic_comp_swap(&_send_token, TOKEN_FREE, TOKEN_LOCK);
+                //atomic_comp_swap(&_send_token, TOKEN_FREE, TOKEN_LOCK);
+                BOOST_INTERLOCKED_COMPARE_EXCHANGE(&_send_token, TOKEN_FREE, TOKEN_LOCK);
 
                 // trigger next send
                 try_start_send();
@@ -450,15 +454,18 @@ private:
         }
 
         bool started = false;
-        if (is_connected() 
-                && atomic_comp_swap(&_receive_token, TOKEN_LOCK, TOKEN_FREE) == TOKEN_FREE)
+        //if (is_connected() 
+        //        && atomic_comp_swap(&_receive_token, TOKEN_LOCK, TOKEN_FREE) == TOKEN_FREE)
+        if (is_connected()
+            && BOOST_INTERLOCKED_COMPARE_EXCHANGE(&_receive_token, TOKEN_LOCK, TOKEN_FREE) == TOKEN_FREE)
         {
             SCHECK(_receiving_data != NULL);
             SCHECK(_receiving_size > 0);
             if((_read_quota_token = _flow_controller->acquire_read_quota(_receiving_size)) <= 0)
             {
                 // no network quota
-                atomic_comp_swap(&_receive_token, TOKEN_FREE, TOKEN_LOCK);
+                //atomic_comp_swap(&_receive_token, TOKEN_FREE, TOKEN_LOCK);
+                BOOST_INTERLOCKED_COMPARE_EXCHANGE(&_receive_token, TOKEN_FREE, TOKEN_LOCK);
             }
             else
             {
@@ -492,8 +499,10 @@ private:
         }
 
         bool started = false;
-        while (is_connected() 
-                && atomic_comp_swap(&_send_token, TOKEN_LOCK, TOKEN_FREE) == TOKEN_FREE)
+//         while (is_connected() 
+//                 && atomic_comp_swap(&_send_token, TOKEN_LOCK, TOKEN_FREE) == TOKEN_FREE)
+        while (is_connected()
+            && BOOST_INTERLOCKED_COMPARE_EXCHANGE(&_send_token, TOKEN_LOCK, TOKEN_FREE) == TOKEN_FREE)
         {
             if (get_from_pending_queue(&_sending_message, &_sending_cookie))
             {
@@ -503,7 +512,8 @@ private:
                     on_send_failed(RPC_ERROR_REQUEST_CANCELED, _sending_message, _sending_cookie);
                     clear_sending_env();
 
-                    atomic_comp_swap(&_send_token, TOKEN_FREE, TOKEN_LOCK);
+                    //atomic_comp_swap(&_send_token, TOKEN_FREE, TOKEN_LOCK);
+                    BOOST_INTERLOCKED_COMPARE_EXCHANGE(&_send_token, TOKEN_FREE, TOKEN_LOCK);
                 }
                 else if ((_write_quota_token =_flow_controller->acquire_write_quota(
                                 _sending_message->TotalCount())) <= 0)
@@ -512,7 +522,8 @@ private:
                     insert_into_pending_queue(_sending_message, _sending_cookie);
                     clear_sending_env();
 
-                    atomic_comp_swap(&_send_token, TOKEN_FREE, TOKEN_LOCK);
+                    //atomic_comp_swap(&_send_token, TOKEN_FREE, TOKEN_LOCK);
+                    BOOST_INTERLOCKED_COMPARE_EXCHANGE(&_send_token, TOKEN_FREE, TOKEN_LOCK);
                     break;
                 }
                 else
@@ -530,7 +541,8 @@ private:
             else
             {
                 // empty pending queue
-                atomic_comp_swap(&_send_token, TOKEN_FREE, TOKEN_LOCK);
+                //atomic_comp_swap(&_send_token, TOKEN_FREE, TOKEN_LOCK);
+                BOOST_INTERLOCKED_COMPARE_EXCHANGE(&_send_token, TOKEN_FREE, TOKEN_LOCK);
                 break;
             }
         }
@@ -775,8 +787,10 @@ private:
     // send and receive token
     static const int TOKEN_FREE = 0;
     static const int TOKEN_LOCK = 1;
-    volatile int _send_token;
-    volatile int _receive_token;
+    //volatile int _send_token;
+    volatile long _send_token;
+    //volatile int _receive_token;
+    volatile long _receive_token;
 }; // class RpcMessageStream
 
 } // namespace pbrpc

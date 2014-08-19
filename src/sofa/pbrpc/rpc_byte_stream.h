@@ -12,13 +12,14 @@
 
 #include <sofa/pbrpc/common_internal.h>
 #include <sofa/pbrpc/rpc_endpoint.h>
+#include <boost/smart_ptr/enable_shared_from_this.hpp>
 
 namespace sofa {
 namespace pbrpc {
 
 using boost::asio::ip::tcp;
 
-class RpcByteStream : public sofa::pbrpc::enable_shared_from_this<RpcByteStream>
+class RpcByteStream : public boost::enable_shared_from_this<RpcByteStream>
 {
 public:
     RpcByteStream(IOService& io_service, const RpcEndpoint& endpoint)
@@ -45,8 +46,10 @@ public:
     // Close the channel.
     void close(const std::string& reason)
     {
+        // TODO:
         // should run for only once
-        if (atomic_swap(&_status, (int)STATUS_CLOSED) != STATUS_CLOSED)
+        //if (atomic_swap(&_status, (int)STATUS_CLOSED) != STATUS_CLOSED)
+        if (BOOST_INTERLOCKED_EXCHANGE(&_status, (long)STATUS_CLOSED) != (long)STATUS_CLOSED)
         {
             snprintf(_error_message, sizeof(_error_message), "%s", reason.c_str());
             boost::system::error_code ec;
@@ -304,7 +307,8 @@ private:
         STATUS_CONNECTED  = 2,
         STATUS_CLOSED     = 3,
     };
-    volatile int _status;
+    //volatile int _status;
+    volatile long _status;
 }; // class RpcByteStream
 
 } // namespace pbrpc

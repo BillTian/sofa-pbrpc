@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FB55C313-8CE5-4A1E-9C24-F163AF09F280}</ProjectGuid>
+    <RootNamespace>sofapbrpc</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\boost.props" />
+    <Import Project="..\protobufd.props" />
+    <Import Project="..\zlibd.props" />
+    <Import Project="..\snappyd.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\boost.props" />
+    <Import Project="..\protobuf.props" />
+    <Import Project="..\zlib.props" />
+    <Import Project="..\snappy.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0501;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN32_WINNT=0x0501;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\sofa\pbrpc\block_wrappers.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\buffer.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\builtin_service.pb.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\builtin_service_impl.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\common.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\common_internal.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\compressed_stream.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\dynamic_rpc_channel_impl.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\gzip_stream.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\lz4.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\mock_test_helper.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\rpc_channel.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\rpc_client.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\rpc_client_impl.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\rpc_controller.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\rpc_endpoint.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\rpc_error_code.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\rpc_meta.pb.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\rpc_option.pb.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\rpc_server.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\rpc_server_impl.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\simple_rpc_channel_impl.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\thread_group.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\timeout_manager.cc" />
+    <ClCompile Include="..\..\src\sofa\pbrpc\timeout_manager_impl.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\sofa\pbrpc\block_wrappers.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\buffer.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\buf_handle.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\builtin_service.pb.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\builtin_service_impl.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\closure.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\closure_helper.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\common.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\common_internal.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\compressed_stream.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\counter.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\dynamic_rpc_channel_impl.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\ext_closure.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\fast_lock.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\flow_controller.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\func_tracer.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\gzip_stream.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\io_service.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\locks.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\lz4.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\mock_test_helper.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\mock_test_helper_impl.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\murmurhash.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\pbrpc.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_byte_stream.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_channel.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_channel_impl.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_client.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_client_impl.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_client_stream.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_controller.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_controller_impl.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_endpoint.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_error_code.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_listener.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_message_header.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_message_stream.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_meta.pb.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_option.pb.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_server.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_server_impl.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_server_stream.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rpc_timeout_manager.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\rw_lock.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\service_pool.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\simple_rpc_channel_impl.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\thread_group.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\thread_group_impl.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\timeout_manager.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\timeout_manager_impl.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\timer_worker.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\tran_buf_pool.h" />
+    <ClInclude Include="..\..\src\sofa\pbrpc\wait_event.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\sofa\pbrpc\builtin_service.proto" />
+    <None Include="..\..\src\sofa\pbrpc\rpc_meta.proto" />
+    <None Include="..\..\src\sofa\pbrpc\rpc_option.proto" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

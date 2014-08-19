@@ -6,6 +6,7 @@
 
 #include <sofa/pbrpc/dynamic_rpc_channel_impl.h>
 #include <sofa/pbrpc/closure.h>
+#include <boost/thread.hpp>
 
 namespace sofa {
 namespace pbrpc {
@@ -13,29 +14,29 @@ namespace pbrpc {
 class EventHandlerImp : public RpcChannel::EventHandler
 {
 public:
-    EventHandlerImp(::sofa::pbrpc::weak_ptr<DynamicRpcChannelImpl> channel) : _channel(channel) {}
+    EventHandlerImp(boost::weak_ptr<DynamicRpcChannelImpl> channel) : _channel(channel) {}
     virtual ~EventHandlerImp() {}
     virtual void OnAddressAdded(const std::vector<std::string>& address_list)
     {
-        ::sofa::pbrpc::shared_ptr<DynamicRpcChannelImpl> channel = _channel.lock();
+        boost::shared_ptr<DynamicRpcChannelImpl> channel = _channel.lock();
         if (channel) {
             channel->OnAddressAdded(address_list);
         }
     }
     virtual void OnAddressRemoved(const std::vector<std::string>& address_list)
     {
-        ::sofa::pbrpc::shared_ptr<DynamicRpcChannelImpl> channel = _channel.lock();
+        boost::shared_ptr<DynamicRpcChannelImpl> channel = _channel.lock();
         if (channel) {
             channel->OnAddressRemoved(address_list);
         }
     }
 private:
-    ::sofa::pbrpc::weak_ptr<DynamicRpcChannelImpl> _channel;
+    boost::weak_ptr<DynamicRpcChannelImpl> _channel;
 };
 
 DynamicRpcChannelImpl::DynamicRpcChannelImpl(
         const RpcClientImplPtr& client_impl,
-        ::sofa::pbrpc::RpcChannel::AddressProvider* address_provider,
+        sofa::pbrpc::RpcChannel::AddressProvider* address_provider,
         const RpcChannelOptions& options)
     : _client_impl(client_impl)
     , _address_provider(address_provider)
@@ -76,7 +77,7 @@ bool DynamicRpcChannelImpl::Init()
     // register TimerDetect
     _timeout_manager.reset(new TimeoutManager());
     _timer_id = _timeout_manager->add_repeating(kDetectInterval,
-            ::sofa::pbrpc::NewPermanentExtClosure(shared_from_this(),
+        sofa::pbrpc::NewPermanentExtClosure(shared_from_this(),
                 &DynamicRpcChannelImpl::TimerDetect));
 
 #if defined( LOG )
@@ -92,15 +93,20 @@ void DynamicRpcChannelImpl::Stop()
     // remove TimerDetect
     _timeout_manager->erase(_timer_id);
     {
-        ScopedLocker<LockType> _(_detect_lock);
+        // TODO:
+        //ScopedLocker<LockType> _(_detect_lock);
+        boost::mutex::scoped_lock _(_detect_lock);
         _is_detect_disabled = true;
     }
     _timeout_manager.reset();
 
     // clear SimpleRpcChannelImpl
     {
-        ScopedLocker<LockType> _1(_add_remove_lock);
-        ScopedLocker<LockType> _2(_map_lock);
+        // TODO:
+        //ScopedLocker<LockType> _1(_add_remove_lock);
+        boost::mutex::scoped_lock _1(_add_remove_lock);
+        //ScopedLocker<LockType> _2(_map_lock);
+        boost::mutex::scoped_lock _2(_map_lock);
         for (ServerContextMap::const_iterator it = _live_map.begin();
                 it != _live_map.end(); ++it) {
             const ServerContextPtr& server = it->second;
@@ -172,7 +178,8 @@ void DynamicRpcChannelImpl::CallMethod(
             break;
         }
         // sleep to retry
-        usleep(kRetryInterval * 1000);
+        //usleep(kRetryInterval * 1000);
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(kRetryInterval * 1000));
         ++retry_count;
     }
 
@@ -197,7 +204,7 @@ void DynamicRpcChannelImpl::CallMethod(
     // Call method.
     if (done != NULL) {
         // async call, replace callback with AsyncCallback
-        done = ::sofa::pbrpc::NewClosure(shared_from_this(),
+        done = sofa::pbrpc::NewClosure(shared_from_this(),
                 &DynamicRpcChannelImpl::AsyncCallback, server, cntl, done);
     }
     server->last_request_seq = ++_request_count;
@@ -215,7 +222,9 @@ uint32 DynamicRpcChannelImpl::WaitCount()
 
 void DynamicRpcChannelImpl::OnAddressAdded(const std::vector<std::string>& address_list)
 {
-    ScopedLocker<LockType> _(_add_remove_lock);
+    // TODO:
+    // ScopedLocker<LockType> _(_add_remove_lock);
+    boost::mutex::scoped_lock _(_add_remove_lock);
     // prepare
     AddResultMap add_results;
     for (std::vector<std::string>::const_iterator it = address_list.begin();
@@ -245,7 +254,9 @@ void DynamicRpcChannelImpl::OnAddressAdded(const std::vector<std::string>& addre
     }
     // add into _live_map
     {
-        ScopedLocker<LockType> _(_map_lock);
+        // TODO:
+        //ScopedLocker<LockType> _(_map_lock);
+        boost::mutex::scoped_lock _(_map_lock);
         for (AddResultMap::iterator it = add_results.begin();
                 it != add_results.end(); ++it) {
             const std::string& server_address = it->first;
@@ -282,7 +293,9 @@ void DynamicRpcChannelImpl::OnAddressAdded(const std::vector<std::string>& addre
 
 void DynamicRpcChannelImpl::OnAddressRemoved(const std::vector<std::string>& address_list)
 {
-    ScopedLocker<LockType> _(_add_remove_lock);
+    // TODO:
+    //ScopedLocker<LockType> _(_add_remove_lock);
+    boost::mutex::scoped_lock _(_add_remove_lock);
     // prepare
     RemoveResultMap remove_results;
     for (std::vector<std::string>::const_iterator it = address_list.begin();
@@ -310,7 +323,9 @@ void DynamicRpcChannelImpl::OnAddressRemoved(const std::vector<std::string>& add
     }
     // remove from _live_map or _unlive_map
     {
-        ScopedLocker<LockType> _(_map_lock);
+        // TODO:
+        // ScopedLocker<LockType> _(_map_lock);
+        boost::mutex::scoped_lock _(_map_lock);
         for (RemoveResultMap::iterator it = remove_results.begin();
                 it != remove_results.end(); ++it) {
             const std::string& server_address = it->first;
@@ -388,7 +403,9 @@ void DynamicRpcChannelImpl::AsyncCallback(
 RpcErrorCode DynamicRpcChannelImpl::ChooseServer(ServerContextPtr& choosed_server, int try_num)
 {
     choosed_server.reset();
-    ScopedLocker<LockType> _(_map_lock);
+    // TODO:
+    //ScopedLocker<LockType> _(_map_lock);
+    boost::mutex::scoped_lock _(_map_lock);
 
     // first choose the channel in _live_map with minimal <wait_count,last_request_seq>.
     if (!_live_map.empty()) {
@@ -487,7 +504,9 @@ void DynamicRpcChannelImpl::MoveToUnlive(
 {
     bool succeed = false;
     {
-        ScopedLocker<LockType> _(_map_lock);
+        // TODO:
+        //ScopedLocker<LockType> _(_map_lock);
+        boost::mutex::scoped_lock _(_map_lock);
         ServerContextMap::iterator find = _live_map.find(server_address);
         if (find != _live_map.end()) {
             ServerContextPtr server = find->second;
@@ -510,7 +529,9 @@ void DynamicRpcChannelImpl::MoveToLive(const std::string& server_address)
 {
     bool succeed = false;
     {
-        ScopedLocker<LockType> _(_map_lock);
+        // TODO:
+        // ScopedLocker<LockType> _(_map_lock);
+        boost::mutex::scoped_lock _(_map_lock);
         ServerContextMap::iterator find = _unlive_map.find(server_address);
         if (find != _unlive_map.end()) {
             ServerContextPtr server = find->second;
@@ -538,7 +559,9 @@ void DynamicRpcChannelImpl::TimerDetect(
         return;
     }
 
-    ScopedLocker<LockType> _(_detect_lock);
+    // TODO:
+    //ScopedLocker<LockType> _(_detect_lock);
+    boost::mutex::scoped_lock _(_detect_lock);
     if (_is_detect_disabled) {
         // disabled
         return;
@@ -546,7 +569,9 @@ void DynamicRpcChannelImpl::TimerDetect(
 
     ServerContextMap detect_map;
     {
-        ScopedLocker<LockType> _(_map_lock);
+        // TODO:
+        //ScopedLocker<LockType> _(_map_lock);
+        boost::mutex::scoped_lock _(_map_lock);
         detect_map = _unlive_map;
     }
     for (ServerContextMap::iterator it = detect_map.begin();
@@ -618,7 +643,9 @@ bool DynamicRpcChannelImpl::ServerContext::InitChannel(
     if (is_channel_inited) {
         return true;
     }
-    ScopedLocker<LockType> _(channel_init_lock);
+    // TODO:
+    //ScopedLocker<LockType> _(channel_init_lock);
+    boost::mutex::scoped_lock _(channel_init_lock);
     if (is_channel_inited) {
         // double check
         return true;
@@ -649,7 +676,9 @@ bool DynamicRpcChannelImpl::ServerContext::InitBuiltinService(const RpcChannelOp
     if (is_builtin_service_inited) {
         return true;
     }
-    ScopedLocker<LockType> _(builtin_service_init_lock);
+    // TODO:
+    // ScopedLocker<LockType> _(builtin_service_init_lock);
+    boost::mutex::scoped_lock _(builtin_service_init_lock);
     if (is_builtin_service_inited) {
         // double check
         return true;

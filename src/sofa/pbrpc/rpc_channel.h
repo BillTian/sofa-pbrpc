@@ -108,13 +108,13 @@ public:
                             ::google::protobuf::Closure* done);
 
 public:
-    const sofa::pbrpc::shared_ptr<RpcChannelImpl>& impl() const
+    const boost::shared_ptr<RpcChannelImpl>& impl() const
     {
         return _impl;
     }
 
 private:
-    sofa::pbrpc::shared_ptr<RpcChannelImpl> _impl;
+    boost::shared_ptr<RpcChannelImpl> _impl;
 
     SOFA_PBRPC_DISALLOW_EVIL_CONSTRUCTORS(RpcChannel);
 }; // class RpcChannel

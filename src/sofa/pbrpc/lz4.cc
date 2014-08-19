@@ -113,6 +113,7 @@
 #define GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
 
 #ifdef _MSC_VER  // Visual Studio
+#include <intrin.h>
 #  define inline __forceinline           // Visual is not C99, but supports some kind of inline
 #  if LZ4_ARCH64	// 64-bit
 #    pragma intrinsic(_BitScanForward64) // For Visual 2005

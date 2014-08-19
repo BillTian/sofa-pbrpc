@@ -21,7 +21,8 @@ namespace pbrpc {
 class TranBufPool
 {
 public:
-    typedef int RefCountType;
+//    typedef int RefCountType;
+    typedef long RefCountType;
 
     // Get the size of single block.
     inline static int block_size() 
@@ -50,7 +51,9 @@ public:
     // * The block pointed by "p" was allocated by this pool and is in use currently.
     inline static void add_ref(void * p)
     {
-        sofa::pbrpc::atomic_inc(reinterpret_cast<RefCountType*>(p) - 1);
+        // TODO:
+        //sofa::pbrpc::atomic_inc(reinterpret_cast<RefCountType*>(p) - 1);
+        BOOST_INTERLOCKED_INCREMENT(reinterpret_cast<RefCountType*>(p)-1);
     }
 
     // Decrease the reference count of the block.  If the reference count equals
@@ -60,7 +63,9 @@ public:
     // * The block pointed by "p" was allocated by this pool and is in use currently.
     inline static void free(void * p)
     {
-        if (sofa::pbrpc::atomic_dec_ret_old(reinterpret_cast<RefCountType*>(p) - 1) == 1)
+        // TODO:
+        //if (sofa::pbrpc::atomic_dec_ret_old(reinterpret_cast<RefCountType*>(p) - 1) == 1)
+        if (BOOST_INTERLOCKED_DECREMENT(reinterpret_cast<RefCountType*>(p)-1) == 0)
         {
             ::free(reinterpret_cast<RefCountType*>(p) - 1);
         }

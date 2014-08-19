@@ -10,8 +10,9 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+#include <boost/log/detail/snprintf.hpp>
+
 #include <sofa/pbrpc/common.h>
-#include <sofa/pbrpc/atomic.h>
 #include <sofa/pbrpc/counter.h>
 #include <sofa/pbrpc/func_tracer.h>
 #include <sofa/pbrpc/io_service.h>
@@ -21,49 +22,51 @@
 namespace sofa {
 namespace pbrpc {
 
+using boost::log::aux::snprintf;
+
 class RpcControllerImpl;
-typedef sofa::pbrpc::shared_ptr<RpcControllerImpl> RpcControllerImplPtr;
-typedef sofa::pbrpc::weak_ptr<RpcControllerImpl> RpcControllerImplWPtr;
+typedef boost::shared_ptr<RpcControllerImpl> RpcControllerImplPtr;
+typedef boost::weak_ptr<RpcControllerImpl> RpcControllerImplWPtr;
 
 class RpcChannelImpl;
-typedef sofa::pbrpc::shared_ptr<RpcChannelImpl> RpcChannelImplPtr;
+typedef boost::shared_ptr<RpcChannelImpl> RpcChannelImplPtr;
 
 class RpcClientImpl;
-typedef sofa::pbrpc::shared_ptr<RpcClientImpl> RpcClientImplPtr;
+typedef boost::shared_ptr<RpcClientImpl> RpcClientImplPtr;
 
 class RpcServerImpl;
-typedef sofa::pbrpc::shared_ptr<RpcServerImpl> RpcServerImplPtr;
-typedef sofa::pbrpc::weak_ptr<RpcServerImpl> RpcServerImplWPtr;
+typedef boost::shared_ptr<RpcServerImpl> RpcServerImplPtr;
+typedef boost::weak_ptr<RpcServerImpl> RpcServerImplWPtr;
 
 class RpcClientStream;
-typedef sofa::pbrpc::shared_ptr<RpcClientStream> RpcClientStreamPtr;
-typedef sofa::pbrpc::weak_ptr<RpcClientStream> RpcClientStreamWPtr;
+typedef boost::shared_ptr<RpcClientStream> RpcClientStreamPtr;
+typedef boost::weak_ptr<RpcClientStream> RpcClientStreamWPtr;
 
 class RpcServerStream;
-typedef sofa::pbrpc::shared_ptr<RpcServerStream> RpcServerStreamPtr;
-typedef sofa::pbrpc::weak_ptr<RpcServerStream> RpcServerStreamWPtr;
+typedef boost::shared_ptr<RpcServerStream> RpcServerStreamPtr;
+typedef boost::weak_ptr<RpcServerStream> RpcServerStreamWPtr;
 
 class RpcListener;
-typedef sofa::pbrpc::shared_ptr<RpcListener> RpcListenerPtr;
+typedef boost::shared_ptr<RpcListener> RpcListenerPtr;
 
 class TimerWorker;
-typedef sofa::pbrpc::shared_ptr<TimerWorker> TimerWorkerPtr;
+typedef boost::shared_ptr<TimerWorker> TimerWorkerPtr;
 
 class RpcTimeoutManager;
-typedef sofa::pbrpc::shared_ptr<RpcTimeoutManager> RpcTimeoutManagerPtr;
+typedef boost::shared_ptr<RpcTimeoutManager> RpcTimeoutManagerPtr;
 
 class ThreadGroup;
-typedef sofa::pbrpc::shared_ptr<ThreadGroup> ThreadGroupPtr;
+typedef boost::shared_ptr<ThreadGroup> ThreadGroupPtr;
 
 class ServicePool;
-typedef sofa::pbrpc::shared_ptr<ServicePool> ServicePoolPtr;
-typedef sofa::pbrpc::weak_ptr<ServicePool> ServicePoolWPtr;
+typedef boost::shared_ptr<ServicePool> ServicePoolPtr;
+typedef boost::weak_ptr<ServicePool> ServicePoolWPtr;
 
 class FlowController;
-typedef sofa::pbrpc::shared_ptr<FlowController> FlowControllerPtr;
+typedef boost::shared_ptr<FlowController> FlowControllerPtr;
 
 class WaitEvent;
-typedef sofa::pbrpc::shared_ptr<WaitEvent> WaitEventPtr;
+typedef boost::shared_ptr<WaitEvent> WaitEventPtr;
 
 #define SOFA_PBRPC_DECLARE_RESOURCE_COUNTER(name_) \
     extern sofa::pbrpc::AtomicCounter g_sofa_counter_##name_

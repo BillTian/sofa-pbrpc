@@ -12,7 +12,7 @@
 namespace sofa {
 namespace pbrpc {
 
-class TimerWorker : public sofa::pbrpc::enable_shared_from_this<TimerWorker>
+class TimerWorker : public boost::enable_shared_from_this<TimerWorker>
 {
 public:
     typedef boost::function<void(const PTime& /* now */)> WorkRoutine;
@@ -53,7 +53,9 @@ public:
         if (_is_running) return;
         _is_running = true;
 
-        ScopedLocker<MutexLock> _(_timer_lock);
+        // TODO:
+        //ScopedLocker<MutexLock> _(_timer_lock);
+        boost::unique_lock<boost::mutex> _(_timer_lock);
         _timer.expires_from_now(_time_duration);
         _timer.async_wait(_strand.wrap(boost::bind(
                 &TimerWorker::on_timeout, shared_from_this(), _1)));
@@ -64,7 +66,9 @@ public:
         if (!_is_running) return;
         _is_running = false;
 
-        ScopedLocker<MutexLock> _(_timer_lock);
+        // TODO:
+        //ScopedLocker<MutexLock> _(_timer_lock);
+        boost::unique_lock<boost::mutex> _(_timer_lock);
         _timer.cancel();
     }
 
@@ -80,7 +84,9 @@ private:
                 _work_routine(now);
             }
 
-            ScopedLocker<MutexLock> _(_timer_lock);
+            // TODO:
+            //ScopedLocker<MutexLock> _(_timer_lock);
+            boost::unique_lock<boost::mutex> _(_timer_lock);
             _timer.expires_at(now + _time_duration);
             _timer.async_wait(_strand.wrap(boost::bind(
                             &TimerWorker::on_timeout, shared_from_this(), _1)));
@@ -95,7 +101,8 @@ private:
     WorkRoutine _work_routine;
 
     IOServiceTimer _timer;
-    MutexLock _timer_lock;
+//    MutexLock _timer_lock;
+    boost::mutex _timer_lock;
     IOServiceStrand _strand;
 
     SOFA_PBRPC_DISALLOW_EVIL_CONSTRUCTORS(TimerWorker);

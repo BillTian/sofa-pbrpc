@@ -25,7 +25,7 @@ namespace pbrpc {
 
 #define CompressTypeAuto ((CompressType)-1)
 
-class RpcControllerImpl : public sofa::pbrpc::enable_shared_from_this<RpcControllerImpl>
+class RpcControllerImpl : public boost::enable_shared_from_this<RpcControllerImpl>
 {
 public:
     typedef boost::function<void(const RpcControllerImplPtr&)> InternalDoneCallback;
@@ -211,8 +211,10 @@ public:
 
     void Done(int error_code, const std::string& reason)
     {
+        // TODO
         // make sure that the callback is only called once.
-        if (atomic_comp_swap(&_is_done, DONE, NOT_DONE) == NOT_DONE)
+        //if (atomic_comp_swap(&_is_done, DONE, NOT_DONE) == NOT_DONE)
+        if (BOOST_INTERLOCKED_COMPARE_EXCHANGE(&_is_done, DONE, NOT_DONE) == NOT_DONE)
         {
             SetFailed(error_code, reason);
 
@@ -368,7 +370,8 @@ private:
     // used only in client side
     static const int NOT_DONE = 0;
     static const int DONE = 1;
-    volatile int _is_done; // 0 means not done, 1 means aleady done
+    //volatile int _is_done; // 0 means not done, 1 means aleady done
+    volatile long _is_done; // 0 means not done, 1 means aleady done
     bool _is_request_sent; // if the request has been sent
     int64 _sent_bytes; // sent bytes including the header
     bool _is_start_cancel; // if has started canceling the call

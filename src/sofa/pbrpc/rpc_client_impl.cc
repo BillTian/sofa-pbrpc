@@ -300,7 +300,7 @@ void RpcClientImpl::CallMethod(const google::protobuf::Message* request,
     }
     else
     {
-        ::sofa::pbrpc::scoped_ptr<AbstractCompressedOutputStream> os(
+        boost::scoped_ptr<AbstractCompressedOutputStream> os(
                 get_compressed_output_stream(&write_buffer, meta.compress_type()));
         serialize_request_return = request->SerializeToZeroCopyStream(os.get());
         os->Flush();
@@ -427,7 +427,7 @@ void RpcClientImpl::DoneCallback(google::protobuf::Message* response,
         }
         else
         {
-            ::sofa::pbrpc::scoped_ptr<AbstractCompressedInputStream> is(
+            boost::scoped_ptr<AbstractCompressedInputStream> is(
                     get_compressed_input_stream(buffer.get(), compress_type));
             parse_response_return = response->ParseFromZeroCopyStream(is.get());
         }

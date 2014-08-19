@@ -22,7 +22,7 @@ using google::protobuf::io::CodedOutputStream;
 #include <sofa/pbrpc/lz4.h>
 
 #if HAVE_SNAPPY
-#include <snappy.h>
+#include <snappy-c.h>
 #endif
 
 namespace sofa {
@@ -170,31 +170,31 @@ bool BlockCompressionOutputStream::Next(void** data, int* size) {
 
 void SnappyInputStream::RawUncompress(char* input_buffer, uint32_t compressed_size) {
     size_t uncompressed_size;
-    bool success = ::snappy::GetUncompressedLength(
+    snappy_status success = snappy_uncompressed_length(
         input_buffer, compressed_size, &uncompressed_size);
-    SCHECK(success);
+    SCHECK(success == SNAPPY_OK);
     
     if (uncompressed_size > _output_buffer_size) {
         delete[] _output_buffer;
         _output_buffer_size = uncompressed_size;
         _output_buffer = new char[_output_buffer_size];
     }
-    success = ::snappy::RawUncompress(input_buffer, compressed_size,
-        _output_buffer);
-    SCHECK(success);    
+    success = snappy_uncompress(input_buffer, compressed_size,
+        _output_buffer, &_output_buffer_size);
+    SCHECK(success == SNAPPY_OK);
 }
 
 
 uint32_t SnappyOutputStream::MaxCompressedLength(size_t input_size)
 {
-    return ::snappy::MaxCompressedLength(input_size);
+    return snappy_max_compressed_length(input_size);
 }
 
 uint32_t SnappyOutputStream::RawCompress(char* input_buffer, size_t input_size,
     char* output_buffer)
 {
     size_t compressed_size = 0;
-    ::snappy::RawCompress(input_buffer, input_size, output_buffer,
+    snappy_compress(input_buffer, input_size, output_buffer,
         &compressed_size);
     return compressed_size;
 }

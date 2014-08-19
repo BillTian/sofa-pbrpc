@@ -32,7 +32,7 @@
 
 **************************************************************************/
 
-#define BOOST_ASIO_HAS_EPOLL 1
+//#define BOOST_ASIO_HAS_EPOLL 1
 
 #include <boost/asio.hpp>
 #include <sofa/pbrpc/common.h>
@@ -41,16 +41,16 @@ namespace sofa {
 namespace pbrpc {
 
 typedef boost::asio::io_service IOService;
-typedef sofa::pbrpc::shared_ptr<IOService> IOServicePtr;
+typedef boost::shared_ptr<IOService> IOServicePtr;
 
 typedef boost::asio::io_service::work IOServiceWork;
-typedef sofa::pbrpc::shared_ptr<IOServiceWork> IOServiceWorkPtr;
+typedef boost::shared_ptr<IOServiceWork> IOServiceWorkPtr;
 
 typedef boost::asio::io_service::strand IOServiceStrand;
-typedef sofa::pbrpc::shared_ptr<IOServiceStrand> IOServiceStrandPtr;
+typedef boost::shared_ptr<IOServiceStrand> IOServiceStrandPtr;
 
 typedef boost::asio::deadline_timer IOServiceTimer;
-typedef sofa::pbrpc::shared_ptr<IOServiceTimer> IOServiceTimerPtr;
+typedef boost::shared_ptr<IOServiceTimer> IOServiceTimerPtr;
 
 } // namespace pbrpc
 } // namespace sofa

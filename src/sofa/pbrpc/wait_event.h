@@ -7,47 +7,56 @@
 #ifndef _SOFA_PBRPC_WAIT_EVENT_H_
 #define _SOFA_PBRPC_WAIT_EVENT_H_
 
-#include <pthread.h>
+//#include <pthread.h>
+
+#include <boost/thread/condition_variable.hpp>
 
 namespace sofa {
 namespace pbrpc {
 
+// TODO:
 class WaitEvent
 {
 public:
     WaitEvent() : _signaled(false)
     {
-        pthread_mutex_init(&_lock, NULL);
-        pthread_cond_init(&_cond, NULL);
+//        pthread_mutex_init(&_lock, NULL);
+//        pthread_cond_init(&_cond, NULL);
     }
     ~WaitEvent() 
     {
-        pthread_mutex_destroy(&_lock);
-        pthread_cond_destroy(&_cond);
+//        pthread_mutex_destroy(&_lock);
+//        pthread_cond_destroy(&_cond);
     }
 
     void Wait()
     {
-        pthread_mutex_lock(&_lock);
+//        pthread_mutex_lock(&_lock);
+        boost::unique_lock<boost::mutex> _(_lock);
         while (!_signaled)
         {
-            pthread_cond_wait(&_cond, &_lock);
+            //pthread_cond_wait(&_cond, &_lock);
+            _cond.wait(_);
         }
         _signaled = false;
-        pthread_mutex_unlock(&_lock);
+//        pthread_mutex_unlock(&_lock);
     }
 
     void Signal()
     {
-        pthread_mutex_lock(&_lock);
+//        pthread_mutex_lock(&_lock);
+        boost::unique_lock<boost::mutex> _(_lock);
         _signaled = true;
-        pthread_cond_signal(&_cond);
-        pthread_mutex_unlock(&_lock);
+        _cond.notify_all();
+//        pthread_cond_signal(&_cond);
+//        pthread_mutex_unlock(&_lock);
     }
 
 private:
-    pthread_mutex_t _lock;
-    pthread_cond_t _cond;
+//     pthread_mutex_t _lock;
+//     pthread_cond_t _cond;
+    boost::mutex              _lock;
+    boost::condition_variable _cond;
     bool _signaled;
 };
 

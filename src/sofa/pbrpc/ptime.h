@@ -10,6 +10,9 @@
 #include <cstdio> // for snprintf()
 
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/log/detail/snprintf.hpp>
+
+#include <sofa/pbrpc/common_internal.h>
 
 namespace sofa {
 namespace pbrpc {
@@ -29,6 +32,7 @@ inline PTime ptime_infin()
 
 inline std::string ptime_to_string(const PTime& t)
 {
+    using namespace boost::log::aux;
     PTime::date_type date = t.date();
     TimeDuration tod = t.time_of_day();
     char buf[100];

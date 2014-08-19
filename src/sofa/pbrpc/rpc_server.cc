@@ -5,7 +5,6 @@
 // Author: qinzuoyan01@baidu.com (Qin Zuoyan)
 
 #include <signal.h>
-#include <unistd.h>
 
 #include <sofa/pbrpc/rpc_server.h>
 #include <sofa/pbrpc/rpc_server_impl.h>
@@ -43,7 +42,9 @@ int RpcServer::Run()
     signal(SIGINT, SignalIntHandler);
     signal(SIGTERM, SignalIntHandler);
     while (!s_quit) {
-        sleep(1);
+        // TODO:
+        //sleep(1);
+        boost::this_thread::sleep_for(boost::chrono::seconds(1));
     }
     return 0;
 }

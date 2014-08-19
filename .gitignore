@@ -2,3 +2,9 @@
 *.a
 sofa-pbrpc-client
 
+/vs2013/*.opensdf
+/vs2013/*.suo
+/vs2013/*.sdf
+Debug
+Release
+*.user

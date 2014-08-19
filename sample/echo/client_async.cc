@@ -4,7 +4,7 @@
 //
 // Author: qinzuoyan01@baidu.com (Qin Zuoyan)
 
-#include <unistd.h>
+//#include <unistd.h>
 #include <sofa/pbrpc/pbrpc.h>
 #include "echo_service.pb.h"
 
@@ -62,7 +62,8 @@ int main()
 
     // Wait call done.
     while (!callbacked) {
-        usleep(100000);
+        //usleep(100000);
+        boost::this_thread::sleep_for(boost::chrono::microseconds(100000));
     }
 
     return EXIT_SUCCESS;
